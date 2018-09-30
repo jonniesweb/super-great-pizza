@@ -51,6 +51,8 @@ class FetcherService
     discount = Discount.find_or_initialize_by(code: code)
     discount.json = json
     discount.name = json.dig('Name')
+    discount.location = json.dig('StoreID')&.to_i
+    discount.last_checked = Time.current.utc
 
     product_codes = json.dig('ProductGroups')[0].dig('ProductCodes')
     product_types = product_codes.map do |code|
