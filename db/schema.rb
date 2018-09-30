@@ -10,12 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_30_013229) do
+ActiveRecord::Schema.define(version: 2018_09_30_173131) do
 
   create_table "discounts", force: :cascade do |t|
     t.string "code"
     t.string "name"
     t.json "json"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "discounts_product_types", id: false, force: :cascade do |t|
+    t.integer "discount_id"
+    t.integer "product_type_id"
+    t.index ["discount_id"], name: "index_discounts_product_types_on_discount_id"
+    t.index ["product_type_id"], name: "index_discounts_product_types_on_product_type_id"
+  end
+
+  create_table "product_types", force: :cascade do |t|
+    t.string "name"
+    t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

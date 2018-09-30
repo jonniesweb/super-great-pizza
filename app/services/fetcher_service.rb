@@ -34,18 +34,30 @@ class FetcherService
     if response.code == '404'
       # code doesn't exist
     elsif response.code == '200'
-      json = JSON.parse(response.body)
-      code = json.dig('Code')
-      name = json.dig('Name')
-
-      puts("found discount code: #{code}, name: #{name}")
-      Discount.create!(json: json, code: code, name: name)
+      process_discount!(response.body)
     else
       json = JSON.parse(response.body)
-      puts "unexpected response: #{response.code}"
-      puts json.inspect
+      Rails.logger.warn "unexpected response: #{response.code}"
+      Rails.logger.warn json.inspect
     end
 
-    puts "finish #{code}-#{response.code} in #{(Time.now - time).seconds}"
+    Rails.logger.info "finish #{code}-#{response.code} in #{(Time.now - time).seconds}"
+  end
+
+  def self.process_discount!(raw_json)
+    json = JSON.parse(raw_json)
+    code = json.dig('Code')
+
+    discount = Discount.find_or_initialize_by(code: code)
+    discount.json = json
+    discount.name = json.dig('Name')
+
+    product_codes = json.dig('ProductGroups')[0].dig('ProductCodes')
+    product_types = product_codes.map do |code|
+      ProductType.find_or_create_by!(code: code)
+    end
+
+    discount.product_types = product_types
+    discount.save!
   end
 end
