@@ -17,5 +17,12 @@ module SuperGreatPizza
     # the framework and any gems in your application.
     config.paths.add File.join('app', 'services'), glob: File.join('**', '*.rb')
     config.autoload_paths += Dir[Rails.root.join('app', 'services', '*')]
+
+    config.active_job.queue_adapter = :async
+    config.active_job.queue_adapter = ActiveJob::QueueAdapters::AsyncAdapter.new(
+      min_threads: 1,
+      max_threads: 5 * Concurrent.processor_count,
+      idletime: 10.seconds
+    )
   end
 end

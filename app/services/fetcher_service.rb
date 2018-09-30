@@ -1,38 +1,13 @@
 class FetcherService
   THREAD_POOL_SIZE = 10
-  def call
-    thread_pool = Concurrent::FixedThreadPool.new(THREAD_POOL_SIZE)
-    discounts = Concurrent::Array.new
-
+  def self.call
     range = 3000..20000
     range.each do |code|
-      thread_pool.post(code) do |code|
-        result = run(code)
-        discounts << result if result
-        true
-      end
+      FetchDiscountJob.perform_later(code)
     end
-
-    terminated = false
-    while thread_pool.queue_length > 0
-      puts "waiting 5 seconds for threads to finish. Current queue length: #{thread_pool.queue_length}"
-      terminated = thread_pool.wait_for_termination(5)
-
-      puts "saving discounts of size #{discounts.size}"
-      discounts_to_save = discounts.pop(discounts.size)
-      discounts_to_save.each(&:save!)
-    end
-
-    puts 'shutting down thread pool'
-    thread_pool.shutdown
-    thread_pool.wait_for_termination(5)
-
-    save_discounts(discounts)
   end
 
-  private
-
-  def run(code)
+  def self.run(code)
     time = Time.now
 
     url = URI("https://order.dominos.ca/power/store/10503/coupon/#{code}?lang=en")
@@ -55,7 +30,6 @@ class FetcherService
     request["connection"] = 'keep-alive'
 
     response = http.request(request)
-    discount = nil
 
     if response.code == '404'
       # code doesn't exist
@@ -65,19 +39,13 @@ class FetcherService
       name = json.dig('Name')
 
       puts("found discount code: #{code}, name: #{name}")
-      discount = Discount.new(json: json, code: code, name: name)
+      Discount.create!(json: json, code: code, name: name)
     else
       json = JSON.parse(response.body)
       puts "unexpected response: #{response.code}"
       puts json.inspect
     end
+
     puts "finish #{code}-#{response.code} in #{(Time.now - time).seconds}"
-
-    discount
-  end
-
-  def save_discounts(discounts)
-    puts "saving #{discounts.size} discounts"
-    discounts.each(:save!)
   end
 end
