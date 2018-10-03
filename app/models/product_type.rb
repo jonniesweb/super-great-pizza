@@ -1,3 +1,4 @@
 class ProductType < ApplicationRecord
-  has_and_belongs_to_many :discounts
+  has_many :discount_product_types
+  has_many :discounts, through: :discount_product_types
 end
