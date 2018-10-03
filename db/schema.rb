@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_03_014427) do
+ActiveRecord::Schema.define(version: 2018_10_03_032855) do
+
+  create_table "discount_product_type_groups", force: :cascade do |t|
+    t.integer "discount_id"
+    t.integer "required_quantity"
+    t.integer "max_quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "discount_product_types", id: false, force: :cascade do |t|
+    t.integer "discount_id"
+    t.integer "product_type_id"
+    t.integer "discount_product_type_group_id"
+    t.index ["discount_id"], name: "index_discount_product_types_on_discount_id"
+    t.index ["discount_product_type_group_id"], name: "index_discount_product_types_group_id"
+    t.index ["product_type_id"], name: "index_discount_product_types_on_product_type_id"
+  end
 
   create_table "discounts", force: :cascade do |t|
     t.string "code"
@@ -22,13 +39,6 @@ ActiveRecord::Schema.define(version: 2018_10_03_014427) do
     t.integer "location"
     t.decimal "price", precision: 10, scale: 2
     t.boolean "removed", default: false
-  end
-
-  create_table "discounts_product_types", id: false, force: :cascade do |t|
-    t.integer "discount_id"
-    t.integer "product_type_id"
-    t.index ["discount_id"], name: "index_discounts_product_types_on_discount_id"
-    t.index ["product_type_id"], name: "index_discounts_product_types_on_product_type_id"
   end
 
   create_table "product_types", force: :cascade do |t|
