@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_03_013705) do
+ActiveRecord::Schema.define(version: 2018_10_03_014427) do
 
   create_table "discounts", force: :cascade do |t|
     t.string "code"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2018_10_03_013705) do
     t.datetime "last_checked"
     t.integer "location"
     t.decimal "price", precision: 10, scale: 2
+    t.boolean "removed", default: false
   end
 
   create_table "discounts_product_types", id: false, force: :cascade do |t|

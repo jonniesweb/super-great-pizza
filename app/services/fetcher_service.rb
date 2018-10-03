@@ -33,7 +33,7 @@ class FetcherService
     response = http.request(request)
 
     if response.code == '404'
-      # code doesn't exist
+      remove_discount!(response.body)
     elsif response.code == '200'
       process_discount!(response.body)
     else
@@ -55,6 +55,7 @@ class FetcherService
     discount.location = json.dig('StoreID')&.to_i
     discount.last_checked = Time.current.utc
     discount.price = json.dig('Price')
+    discount.removed = false
 
     product_codes = json.dig('ProductGroups')[0].dig('ProductCodes')
     product_types = product_codes.map do |code|
@@ -62,6 +63,16 @@ class FetcherService
     end
 
     discount.product_types = product_types
+    discount.save!
+  end
+
+  def self.remove_discount!(raw_json)
+    json = JSON.parse(raw_json)
+    code = json.dig('Code')
+
+    return unless discount = Discount.find_by(code: code)
+    discount.last_checked = Time.current.utc
+    discount.removed = true
     discount.save!
   end
 end
