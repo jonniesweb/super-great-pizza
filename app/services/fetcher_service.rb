@@ -1,5 +1,6 @@
 class FetcherService
   THREAD_POOL_SIZE = 10
+  DEFAULT_STORE = 10503
   def self.call
     range = 3000..20000
     range.each do |code|
@@ -7,10 +8,10 @@ class FetcherService
     end
   end
 
-  def self.run(code)
+  def self.run(code, store_id: DEFAULT_STORE)
     time = Time.now
 
-    url = URI("https://order.dominos.ca/power/store/10503/coupon/#{code}?lang=en")
+    url = URI("https://order.dominos.ca/power/store/#{store_id}/coupon/#{code}?lang=en")
 
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
