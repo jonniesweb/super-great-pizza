@@ -1,4 +1,6 @@
 class FetcherService
+  require 'net/http'
+
   THREAD_POOL_SIZE = 10
   DEFAULT_STORE = 10503
   def self.call
@@ -45,8 +47,23 @@ class FetcherService
     Rails.logger.info "finish #{code}-#{response.code} in #{(Time.now - time).seconds}"
   end
 
+  def self.test_one
+    process_discount!(Discount.find_by(id: 41).json.to_json)
+  end
+
+  def self.reprocess_all
+    Discount.all.each do |discount|
+      process_discount!(discount.json)
+    end
+  end
+
   def self.process_discount!(raw_json)
-    json = JSON.parse(raw_json)
+    json = case raw_json
+    when Hash
+      raw_json
+    when String
+      JSON.parse(raw_json)
+    end
     code = json.dig('Code')
 
     discount = Discount.find_or_initialize_by(code: code)
@@ -57,12 +74,19 @@ class FetcherService
     discount.price = json.dig('Price')
     discount.removed = false
 
-    product_codes = json.dig('ProductGroups')[0].dig('ProductCodes')
-    product_types = product_codes.map do |code|
-      ProductType.find_or_create_by!(code: code)
-    end
+    json.dig('ProductGroups').each do |product_group|
+      group = discount.discount_product_type_groups.find_or_initialize_by(group_type: product_group['Default']['PageCode'])
+      group.required_quantity = product_group['RequiredQty']
+      group.max_quantity = product_group['MaximumQty']
+      group.save! if group.changed?
 
-    discount.product_types = product_types
+      product_codes = product_group.dig('ProductCodes')
+      product_types = product_codes.each do |code|
+        product_type = ProductType.find_or_create_by!(code: code)
+
+        group.discount_product_types.find_or_create_by!(product_type: product_type)
+      end
+    end
     discount.save!
   end
 

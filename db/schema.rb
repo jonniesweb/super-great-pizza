@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_03_034313) do
+ActiveRecord::Schema.define(version: 2018_10_08_044933) do
 
   create_table "discount_product_type_groups", force: :cascade do |t|
     t.integer "discount_id"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2018_10_03_034313) do
     t.integer "max_quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "group_type"
   end
 
   create_table "discount_product_types", id: false, force: :cascade do |t|
