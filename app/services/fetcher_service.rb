@@ -1,8 +1,10 @@
-class FetcherService
-  require 'net/http'
+require 'net/http'
 
+class FetcherService
   THREAD_POOL_SIZE = 10
   DEFAULT_STORE = 10503
+  HOST = 'order.dominos.ca'
+
   def self.call
     range = 3000..20000
     range.each do |code|
@@ -13,31 +15,12 @@ class FetcherService
   def self.run(code, store_id: DEFAULT_STORE)
     time = Time.now
 
-    url = URI("https://order.dominos.ca/power/store/#{store_id}/coupon/#{code}?lang=en")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    request = Net::HTTP::Get.new(url)
-    request["pragma"] = 'no-cache'
-    # request["accept-encoding"] = 'gzip, deflate, br'
-    request["dpz-language"] = 'en'
-    request["accept-language"] = 'en-US,en;q=0.9,en-CA;q=0.8'
-    request["user-agent"] = 'Mozilla/5.0 (X11; Windows x86_64) AppleWebKit/520.92 (KHTML, like Gecko) Chrome/60.0.1974.20 Safari/520.92'
-    request["accept"] = 'application/json, text/javascript, */*; q=0.01'
-    request["dpz-market"] = 'CANADA'
-    request["cache-control"] = 'no-cache'
-    request["referer"] = 'https://order.dominos.ca/assets/build/xdomain/proxy.html'
-    request["market"] = 'CANADA'
-    request["connection"] = 'keep-alive'
-
-    response = http.request(request)
+    response = query_api(HOST, store_id, code)
 
     if response.code == '404'
-      remove_discount!(response.body)
+      remove_discount(response.body)
     elsif response.code == '200'
-      process_discount!(response.body)
+      process_discount(response.body)
     else
       json = JSON.parse(response.body)
       Rails.logger.warn "unexpected response: #{response.code}"
@@ -48,16 +31,38 @@ class FetcherService
   end
 
   def self.test_one
-    process_discount!(Discount.find_by(id: 41).json.to_json)
+    process_discount(Discount.find_by(id: 41).json)
   end
 
   def self.reprocess_all
     Discount.all.each do |discount|
-      process_discount!(discount.json)
+      process_discount(discount.json)
     end
   end
 
-  def self.process_discount!(raw_json)
+  def self.query_api(host, store_id, discount_code)
+    url = URI("https://#{host}/power/store/#{store_id}/coupon/#{discount_code}?lang=en")
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(url)
+    request["pragma"] = 'no-cache'
+    request["dpz-language"] = 'en'
+    request["accept-language"] = 'en-US,en;q=0.9,en-CA;q=0.8'
+    request["user-agent"] = 'Mozilla/5.0 (X11; Windows x86_64) AppleWebKit/520.92 (KHTML, like Gecko) Chrome/60.0.1974.20 Safari/520.92'
+    request["accept"] = 'application/json, text/javascript, */*; q=0.01'
+    request["dpz-market"] = 'CANADA'
+    request["cache-control"] = 'no-cache'
+    request["referer"] = 'https://order.dominos.ca/assets/build/xdomain/proxy.html'
+    request["market"] = 'CANADA'
+    request["connection"] = 'keep-alive'
+
+    http.request(request)
+  end
+
+  def self.process_discount(raw_json)
     json = case raw_json
     when Hash
       raw_json
@@ -90,7 +95,7 @@ class FetcherService
     discount.save!
   end
 
-  def self.remove_discount!(raw_json)
+  def self.remove_discount(raw_json)
     json = JSON.parse(raw_json)
     code = json.dig('Code')
 
