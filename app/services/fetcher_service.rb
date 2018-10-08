@@ -78,6 +78,7 @@ class FetcherService
     discount.last_checked = Time.current.utc
     discount.price = json.dig('Price')
     discount.removed = false
+    discount.save!
 
     json.dig('ProductGroups').each do |product_group|
       group = discount.discount_product_type_groups.find_or_initialize_by(group_type: product_group['Default']['PageCode'])
@@ -92,7 +93,6 @@ class FetcherService
         group.discount_product_types.find_or_create_by!(product_type: product_type)
       end
     end
-    discount.save!
   end
 
   def self.remove_discount(raw_json)

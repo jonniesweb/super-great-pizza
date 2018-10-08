@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Discounts with info</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Price</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @discounts.each do |discount| %>
+      <tr>
+        <td><%= discount.code %></td>
+        <td><%= discount.price %></td>
+        <td><%= discount.name %></td>
+        <table>
+          <thead>
+            <th>Type</th>
+            <th>Min required</th>
+            <th>Max required</th>
+          </thead>
+          <tbody>
+            <% discount.discount_product_type_groups.each do |group| %>
+              <tr>
+                <td><%= group.group_type %></td>
+                <td><%= group.required_quantity %></td>
+                <td><%= group.max_quantity %></td>
+                <td><%= group.product_types.map(&:code).join(', ') %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
