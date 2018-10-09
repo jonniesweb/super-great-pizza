@@ -6,13 +6,29 @@ class FetcherService
   HOST = 'order.dominos.ca'
 
   def self.call
+    new.call
+  end
+
+  def call
     range = 3000..20000
     range.each do |code|
       FetchDiscountJob.perform_later(code)
     end
+
+    Discount.all.pluck(:code).each do |existing_code|
+      puts "code: #{existing_code}"
+      next if range === existing_code
+      puts 'checking...'
+
+      FetchDiscountJob.perform_later(existing_code)
+    end
   end
 
   def self.run(code, store_id: DEFAULT_STORE)
+    new.run(code, store_id: store_id)
+  end
+  
+  def run(code, store_id: DEFAULT_STORE)
     time = Time.now
 
     response = query_api(HOST, store_id, code)
@@ -30,21 +46,21 @@ class FetcherService
     Rails.logger.info "finish #{code}-#{response.code} in #{(Time.now - time).seconds}"
   end
 
-  def self.test_one
+  def test_one
     process_discount(Discount.find_by(id: 41).json)
   end
 
-  def self.reprocess_all
+  def reprocess_all
     Discount.all.each do |discount|
       process_discount(discount.json)
     end
   end
 
-  def self.query_api(host, store_id, discount_code)
+  def query_api(host, store_id, discount_code)
     query("https://#{host}/power/store/#{store_id}/coupon/#{discount_code}?lang=en")
   end
 
-  def self.process_discount(raw_json)
+  def process_discount(raw_json)
     json = case raw_json
     when Hash
       raw_json
@@ -77,7 +93,7 @@ class FetcherService
     end
   end
 
-  def self.remove_discount(raw_json)
+  def remove_discount(raw_json)
     json = JSON.parse(raw_json)
     code = json.dig('Code')
 

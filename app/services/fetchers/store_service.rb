@@ -17,16 +17,17 @@ module Fetchers
 
       store.save!
 
-      current_discounts = json['Coupons'].keys
-      current_discounts.each do |code|
-        FetchDiscountJob.perform_later(code)
-      end
-
       product_types = json['Variants']
       product_types.keys.each do |code|
         product_type = ProductType.find_or_initialize_by(code: code)
         product_type.name = product_types[code]['Name']
         product_type.save!
+      end
+
+      current_discounts = json['Coupons'].keys
+      current_discounts.each do |code|
+        FetchDiscountJob.perform_later(code)
+        # FetcherService.new.run(code)
       end
     end
   end
