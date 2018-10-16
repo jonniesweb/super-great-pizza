@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2018_10_09_022903) do
 
-  create_table "discount_product_type_groups", force: :cascade do |t|
+  create_table "discount_product_type_groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "discount_id"
     t.integer "required_quantity"
     t.integer "max_quantity"
@@ -21,14 +21,14 @@ ActiveRecord::Schema.define(version: 2018_10_09_022903) do
     t.string "group_type"
   end
 
-  create_table "discount_product_types", id: false, force: :cascade do |t|
+  create_table "discount_product_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "product_type_id"
     t.integer "discount_product_type_group_id"
     t.index ["discount_product_type_group_id"], name: "index_discount_product_types_group_id"
     t.index ["product_type_id"], name: "index_discount_product_types_on_product_type_id"
   end
 
-  create_table "discounts", force: :cascade do |t|
+  create_table "discounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "code"
     t.string "name"
     t.json "json"
@@ -40,14 +40,14 @@ ActiveRecord::Schema.define(version: 2018_10_09_022903) do
     t.boolean "removed", default: false
   end
 
-  create_table "product_types", force: :cascade do |t|
+  create_table "product_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "stores", force: :cascade do |t|
+  create_table "stores", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "code"
     t.string "city"
     t.string "address"
