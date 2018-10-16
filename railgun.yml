@@ -1,0 +1,28 @@
+# https://development.shopify.io/tools/dev/railgun/Railgun-Config
+name: super-great-pizza
+
+vm:
+  image:      /opt/dev/misc/railgun-images/default
+  ip_address: 192.168.64.208
+  memory:     2G
+  cores:      2
+
+volumes:
+  root:  '2G'
+
+services:
+  - redis
+  - memcached
+  # - toxiproxy
+  - mysql
+  # - elasticsearch
+  # - zookeeper
+  # - argus
+  # - magellan
+  # - imagery
+  - nginx
+  # - kafka
+
+hostnames:
+  - super-great-pizza.myshopify.io: { proxy_to_host_port: 18848 }
+
