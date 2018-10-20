@@ -6,7 +6,7 @@ default: &default
   pool: 15
   username: root
   password:
-  host: super-great-pizza.railgun
+  host: <%= File.exist?('/opt/dev') ? 'super-great-pizza.railgun' : 'localhost' %>
   port: 3306
   variables:
     sql_mode: TRADITIONAL
