@@ -5,30 +5,30 @@ class FetcherService
   DEFAULT_STORE = 10503
   HOST = 'order.dominos.ca'
 
-  def self.call
-    new.call
+  def self.call(store_id = DEFAULT_STORE)
+    new.call(store_id)
   end
 
-  def call
+  def call(store_id = DEFAULT_STORE)
     range = 3000..20000
     range.each do |code|
-      FetchDiscountJob.perform_later(code)
+      FetchDiscountJob.perform_later(code, store_id)
     end
 
-    Discount.all.pluck(:code).each do |existing_code|
-      puts "code: #{existing_code}"
+    Discount.where(store_id: store_id).pluck(:code).each do |existing_code|
+      puts "code: #{existing_code}, store_id: #{store_id}"
       next if range === existing_code
       puts 'checking...'
 
-      FetchDiscountJob.perform_later(existing_code)
+      FetchDiscountJob.perform_later(existing_code, store_id)
     end
   end
 
-  def self.run(code, store_id: DEFAULT_STORE)
-    new.run(code, store_id: store_id)
+  def self.run(code, store_id = DEFAULT_STORE)
+    new.run(code, store_id)
   end
   
-  def run(code, store_id: DEFAULT_STORE)
+  def run(code, store_id = DEFAULT_STORE)
     time = Time.now
 
     response = query_api(HOST, store_id, code)
@@ -72,9 +72,9 @@ class FetcherService
     discount = Discount.find_or_initialize_by(code: code)
     discount.json = json
     discount.name = json.dig('Name')
-    discount.location = json.dig('StoreID')&.to_i
     discount.last_checked = Time.current.utc
     discount.price = json.dig('Price')
+    discount.store = Store.find_by(code: json.dig('StoreID'))
     discount.removed = false
     discount.save!
 

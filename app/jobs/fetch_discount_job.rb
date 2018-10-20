@@ -1,7 +1,7 @@
 class FetchDiscountJob < ApplicationJob
   queue_as :default
 
-  def perform(code)
-    FetcherService.run(code)
+  def perform(code, store_id)
+    FetcherService.run(code, store_id)
   end
 end

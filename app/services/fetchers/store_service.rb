@@ -26,8 +26,7 @@ module Fetchers
 
       current_discounts = json['Coupons'].keys
       current_discounts.each do |code|
-        FetchDiscountJob.perform_later(code)
-        # FetcherService.new.run(code)
+        FetchDiscountJob.perform_later(code, store_id)
       end
     end
   end
