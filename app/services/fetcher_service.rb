@@ -15,13 +15,11 @@ class FetcherService
       FetchDiscountJob.perform_later(code, store_id)
     end
 
-    Discount.where(store_id: store_id).pluck(:code).each do |existing_code|
-      puts "code: #{existing_code}, store_id: #{store_id}"
-      next if range === existing_code
-      puts 'checking...'
-
-      FetchDiscountJob.perform_later(existing_code, store_id)
-    end
+    Store.find_by(code: store_id)
+      .discounts
+      .pluck(:code)
+      .reject { |existing_code| range === existing_code }
+      .each { |existing_code| FetchDiscountJob.perform_later(existing_code, store_id) }
   end
 
   def self.run(code, store_id = DEFAULT_STORE)

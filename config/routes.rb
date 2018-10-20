@@ -2,5 +2,10 @@ Rails.application.routes.draw do
   root to: 'list#index'
   resources :product_types
   resources :discounts
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resource :refresh, only: :show do
+    post :discount
+    post :store
+    post :all
+    post :soft_all
+  end
 end

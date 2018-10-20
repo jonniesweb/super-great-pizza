@@ -1,0 +1,27 @@
+<h1>Refresh</h1>
+
+<h3>Fetch a discount for a store</h3>
+<%= form_tag :discount_refresh do %>
+  <%= label_tag :code, 'Discount code' %>
+  <%= text_field_tag :code %>
+  <%= label_tag :store_id, 'Store ID' %>
+  <%= text_field_tag :store_id %>
+  <%= submit_tag :Fetch %>
+<% end %>
+
+<h3>Refresh all of a store's discounts</h3>
+<%= form_tag :store_refresh do %>
+  <%= label_tag :store_id, 'Store ID' %>
+  <%= text_field_tag :store_id %>
+  <%= submit_tag :Fetch %>
+<% end %>
+
+<h3>Refresh all discounts</h3>
+<%= form_tag :all_refresh do %>
+  <%= submit_tag :Fetch %>
+<% end %>
+
+<h3>Refresh all discounts (using saved data only)<h3>
+<%= form_tag :soft_all_refresh do %>
+  <%= submit_tag :Refresh %>
+<% end %>
