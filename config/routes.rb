@@ -7,5 +7,6 @@ Rails.application.routes.draw do
     post :store
     post :all
     post :soft_all
+    post :all_store
   end
 end

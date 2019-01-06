@@ -28,4 +28,9 @@ class RefreshesController < ApplicationController
     end
     redirect_to refresh_path
   end
+
+  def all_store
+    FetcherService.call(params.fetch(:store_id))
+    redirect_to refresh_path
+  end
 end
