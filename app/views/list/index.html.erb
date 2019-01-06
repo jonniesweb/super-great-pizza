@@ -2,6 +2,27 @@
 
 <h1>Discounts with info</h1>
 
+<% console %>
+
+<%= search_form_for @q, url: root_path do |f| %>
+  <%= f.label 'store id' %>
+  <%= f.collection_select :store_id_eq, Store.all, :id, :code, include_blank: true %>
+
+  <%= f.label 'discount code' %>
+  <%= f.search_field :code_eq %>
+
+  <%= f.label 'Product Name' %>
+  <%= f.collection_select :product_types_id_eq, ProductType.all, :id, :name, include_blank: true %>
+
+  <%= f.label 'Minimum Required' %>
+  <%= f.search_field :discount_product_type_groups_required_quantity_lteq %>
+  <%# <% binding.pry %1> %>
+
+  <%= f.submit %>
+<% end %>
+
+<%= tag.p @q.inspect %>
+
 <table>
   <thead>
     <tr>

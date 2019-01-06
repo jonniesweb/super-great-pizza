@@ -1,5 +1,6 @@
 class ListController < ApplicationController
   def index
-    @discounts = Discount.all
+    @q = Discount.ransack(params[:q])
+    @discounts = @q.result(distinct: true).includes(:product_types, :discount_product_type_groups, :store)
   end
 end
