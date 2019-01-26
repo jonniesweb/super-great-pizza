@@ -13,10 +13,10 @@ class LocationsController < ApplicationController
     ).fetch
 
     locations.select(&:can_deliver?).each do |location|
-      Fetchers::StoreService.call(location.store_id)
-      Store.find_by(code: location.store_id).update!(
+      Fetchers::StoreService.new(
+        store_id: location.store_id,
         address: location.address
-      )
+      ).fetch
 
       redirect_to root_path(q: {
         store_id_eq: Store.find_by(code: location.store_id)
