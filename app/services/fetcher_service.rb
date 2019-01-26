@@ -74,6 +74,7 @@ class FetcherService
     discount.price = json.dig('Price')
     discount.store = Store.find_by(code: json.dig('StoreID'))
     discount.removed = false
+    discount.image_url = json.dig('SizeThumbNailImageURL')
     discount.save!
 
     json.dig('ProductGroups').each do |product_group|

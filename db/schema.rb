@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_20_202149) do
+ActiveRecord::Schema.define(version: 2019_01_26_205124) do
 
   create_table "discount_product_type_groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "discount_id"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 2018_10_20_202149) do
     t.decimal "price", precision: 10, scale: 2
     t.boolean "removed", default: false
     t.bigint "store_id"
+    t.string "image_url"
     t.index ["store_id"], name: "index_discounts_on_store_id"
   end
 
