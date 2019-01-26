@@ -9,7 +9,7 @@ up:
         or:        [mysql]
         conflicts: [mysql-connector-c]
     # - another_package
-  - ruby: 2.5.3
+  - ruby: 2.6.0
   - bundler
   - railgun
   - database:
