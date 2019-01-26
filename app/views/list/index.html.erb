@@ -6,7 +6,7 @@
 
 <%= search_form_for @q, url: root_path do |f| %>
   <%= f.label 'store id' %>
-  <%= f.collection_select :store_id_eq, Store.all, :id, :code, include_blank: true %>
+  <%= f.collection_select :store_id_eq, Store.all, :id, :address, include_blank: true %>
 
   <%= f.label 'discount code' %>
   <%= f.search_field :code_eq %>
