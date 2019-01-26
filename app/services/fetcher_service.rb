@@ -74,7 +74,7 @@ class FetcherService
     discount.price = json.dig('Price')
     discount.store = Store.find_by(code: json.dig('StoreID'))
     discount.removed = false
-    discount.image_url = json.dig('SizeThumbNailImageURL')
+    discount.image_url = image_url(json)
     discount.save!
 
     json.dig('ProductGroups').each do |product_group|
@@ -100,5 +100,10 @@ class FetcherService
     discount.last_checked = Time.current.utc
     discount.removed = true
     discount.save!
+  end
+
+  def image_url(json)
+    code = json.dig('ImageCode')
+    "https://cache.dominos.com/nolo/ca/en/054113/assets/build/market/CA/_en/images/img/coupons/thumbnails/#{code}.jpg"
   end
 end
