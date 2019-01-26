@@ -16,8 +16,6 @@
 
   <%= f.label 'Minimum Required' %>
   <%= f.search_field :discount_product_type_groups_required_quantity_lteq %>
-  <%# <% binding.pry %1> %>
-
   <%= f.submit %>
 <% end %>
 
@@ -38,6 +36,7 @@
         <td><%= discount.code %></td>
         <td><%= discount.price %></td>
         <td><%= discount.name %></td>
+        <td><%= tag.image src: discount.image_url, refererpolicy: :'no-referrer' if discount.image_url %></td>
         <table>
           <thead>
             <th>Type</th>
