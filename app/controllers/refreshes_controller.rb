@@ -11,7 +11,7 @@ class RefreshesController < ApplicationController
 
   def store
     store_id = params.fetch(:store_id)
-    Fetchers::StoreService.call(store_id)
+    Fetchers::StoreService.new(store_id: store_id).fetch
     redirect_to refresh_path
   end
 

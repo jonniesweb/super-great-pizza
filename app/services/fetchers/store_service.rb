@@ -4,7 +4,7 @@ module Fetchers
 
     StoreFetchError = Class.new(StandardError)
 
-    def initialize(store_id:, address:)
+    def initialize(store_id:, address: nil)
       @store_id = store_id
       @address = address
     end
@@ -15,7 +15,7 @@ module Fetchers
 
         Store.find_or_create_by(code: store_id) do |store|
           store.json = body
-          store.address = address
+          store.address = address if address
         end
 
         product_types = body.fetch('Variants')
