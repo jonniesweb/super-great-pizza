@@ -12,16 +12,16 @@ class LocationsController < ApplicationController
       **location_params.to_h.symbolize_keys
     ).fetch
 
-    locations.select(&:can_deliver?).each do |location|
+    locations.each do |location|
       Fetchers::StoreService.new(
         store_id: location.store_id,
         address: location.address
       ).fetch
-
-      redirect_to root_path(q: {
-        store_id_eq: Store.find_by(code: location.store_id)
-      })
     end
+
+    redirect_to root_path(q: {
+      store_id_eq: Store.find_by(code: locations.find(&:can_deliver?).store_id)
+    })
   end
 
   def location_params
