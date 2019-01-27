@@ -32,7 +32,7 @@
   <%= tag.tbody do %>
     <% @discounts.each do |discount| %>
       <%= tag.tr do %>
-        <%= tag.td tag.image src: discount.image_url, refererpolicy: :'no-referrer' %>
+        <%= tag.td tag.image src: discount.image_url %>
         <%= tag.td tag.h3 discount.name %>
         <%= tag.td "$#{discount.price}" %>
         <%= tag.td discount.code %>
