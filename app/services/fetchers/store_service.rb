@@ -13,7 +13,7 @@ module Fetchers
       query(uri).then do |response|
         body = JSON.parse(response.body)
 
-        Store.find_or_create_by(code: store_id) do |store|
+        Store.find_or_create_by!(code: store_id) do |store|
           store.json = body
           store.address = address if address
         end
@@ -21,7 +21,7 @@ module Fetchers
         product_types = body.fetch('Variants')
 
         product_types.keys.each do |code|
-          ProductType.find_or_create_by(code: code) do |product_type|
+          ProductType.find_or_create_by!(code: code) do |product_type|
             product_type.name = product_types.dig(code, 'Name')
           end
         end

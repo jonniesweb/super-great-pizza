@@ -66,13 +66,13 @@ class FetcherService
       JSON.parse(raw_json)
     end
     code = json.dig('Code')
+    store = Store.find_by(code: json.dig('StoreID'))
 
-    discount = Discount.find_or_initialize_by(code: code)
+    discount = Discount.find_or_initialize_by(code: code, store: store)
     discount.json = json
     discount.name = json.dig('Name')
     discount.last_checked = Time.current.utc
     discount.price = json.dig('Price')
-    discount.store = Store.find_by(code: json.dig('StoreID'))
     discount.removed = false
     discount.image_url = image_url(json)
     discount.save!
