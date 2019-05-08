@@ -99,6 +99,9 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    pry-byebug (3.7.0)
+      byebug (~> 11.0)
+      pry (~> 0.10)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     puma (3.12.1)
@@ -167,9 +170,6 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.9)
-    turbolinks (5.2.0)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uglifier (4.1.20)
@@ -189,10 +189,10 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap (>= 1.1.0)
-  byebug
   jbuilder
   listen (>= 3.0.5, < 3.2)
   mysql2
+  pry-byebug
   pry-rails
   puma
   rails (~> 6.0.0.rc1)
@@ -200,12 +200,11 @@ DEPENDENCIES
   sass-rails
   spring
   spring-watcher-listen (~> 2.0.0)
-  turbolinks
   uglifier
   web-console
 
 RUBY VERSION
-   ruby 2.6.0p0
+   ruby 2.6.3p62
 
 BUNDLED WITH
    1.17.3
