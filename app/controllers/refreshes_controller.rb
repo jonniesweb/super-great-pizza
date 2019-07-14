@@ -1,3 +1,4 @@
+# typed: false
 class RefreshesController < ApplicationController
   def show
   end

@@ -1,3 +1,4 @@
+# typed: strict
 module Types
   class GroupType < Types::BaseEnum
     value "PIZZA"

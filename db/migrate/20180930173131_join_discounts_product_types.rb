@@ -1,3 +1,4 @@
+# typed: false
 class JoinDiscountsProductTypes < ActiveRecord::Migration[5.2]
   def change
     create_table :discounts_product_types, id: false do |t|

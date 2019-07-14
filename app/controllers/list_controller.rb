@@ -1,3 +1,4 @@
+# typed: true
 class ListController < ApplicationController
   def index
     @q = Discount.ransack(params[:q])

@@ -1,3 +1,4 @@
+# typed: false
 module Types
   class QueryType < Types::BaseObject
     field :store_by_code, StoreType, null: true do

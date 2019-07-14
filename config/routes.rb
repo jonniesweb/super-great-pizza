@@ -1,3 +1,4 @@
+# typed: strict
 Rails.application.routes.draw do
   root to: 'list#index'
   resources :product_types

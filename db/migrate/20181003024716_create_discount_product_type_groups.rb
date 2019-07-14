@@ -1,3 +1,4 @@
+# typed: true
 class CreateDiscountProductTypeGroups < ActiveRecord::Migration[5.2]
   def change
     create_table :discount_product_type_groups do |t|

@@ -1,3 +1,4 @@
+# typed: true
 module Types
   class ProductGroupType < Types::BaseObject
     field :group_type, GroupType, null: false

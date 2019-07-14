@@ -1,3 +1,4 @@
+# typed: true
 class DiscountsController < ApplicationController
   before_action :set_discount, only: [:show, :edit, :update, :destroy]
 

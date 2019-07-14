@@ -1,3 +1,4 @@
+# typed: false
 class AddGroupToDiscountProductType < ActiveRecord::Migration[5.2]
   def change
     add_column :discounts_product_types, :discount_product_type_group_id, :integer

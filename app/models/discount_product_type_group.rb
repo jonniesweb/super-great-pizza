@@ -1,3 +1,4 @@
+# typed: strong
 class DiscountProductTypeGroup < ApplicationRecord
   belongs_to :discount
   has_many :discount_product_types

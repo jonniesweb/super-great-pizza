@@ -1,3 +1,4 @@
+# typed: false
 class FetchDiscountJob < ApplicationJob
   queue_as :default
 
