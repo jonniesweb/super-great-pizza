@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 module Fetchers
@@ -33,7 +33,7 @@ module Fetchers
         end
       rescue Net::ReadTimeout => e
         raise LocationFetchError,
-          "Error fetching location for #{uri}, status: #{response.code}, #{e}" and retry
+          "Error fetching location for #{uri}, status: #{response.code}, #{e}"
       end
     end
 

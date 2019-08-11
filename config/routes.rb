@@ -1,6 +1,6 @@
 # typed: strict
 Rails.application.routes.draw do
-  root to: 'list#index'
+  root 'list#index'
   resources :product_types
   resources :discounts
 

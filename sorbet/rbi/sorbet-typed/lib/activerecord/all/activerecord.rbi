@@ -138,7 +138,7 @@ module ActiveRecord::Associations::ClassMethods
       polymorphic: T.nilable(T::Boolean),
       primary_key: T.nilable(T.any(Symbol, String)),
       required: T.nilable(T::Boolean),
-      touch: T.nilable(T::Boolean),
+      touch: T.nilable(T.any(T::Boolean, Symbol)),
       validate: T.nilable(T::Boolean),
       default: T.nilable(T.proc.returns(T.untyped))
     ).void
@@ -172,12 +172,12 @@ module ActiveRecord::Associations::ClassMethods
       autosave: T.nilable(T::Boolean),
       before_add: T.nilable(T.any(Symbol, String, T.proc.void)),
       before_remove: T.nilable(T.any(Symbol, String, T.proc.void)),
-      blk: T.nilable(T.proc.void),
       class_name: T.nilable(T.any(Symbol, String)),
       extend: T.nilable(T.any(Module, T::Array[Module])),
       foreign_key: T.nilable(T.any(Symbol, String)),
       join_table: T.nilable(T.any(Symbol, String)),
       validate: T.nilable(T::Boolean),
+      blk: T.nilable(T.proc.void)
     ).void
   end
   def has_and_belongs_to_many(
@@ -529,36 +529,12 @@ end
 
 module ActiveRecord::Persistence
   mixes_in_class_methods(ActiveRecord::Persistence::ClassMethods)
-end
 
-module ActiveRecord::Persistence::ClassMethods
-  sig { params(klass: Class).returns(Class) }
+  sig { params(klass: Class).returns(T.untyped) }
   def becomes!(klass); end
 
-  sig { params(klass: Class).returns(Class) }
+  sig { params(klass: Class).returns(T.untyped) }
   def becomes(klass); end
-
-  sig do
-    params(
-      attributes: T.nilable(T.any(
-        T::Hash[T.any(Symbol, String), T.untyped],
-        T::Array[T::Hash[T.any(Symbol, String), T.untyped]]
-      )),
-      blk: T.nilable(T.proc.params(arg0: T.untyped).returns(T.untyped))
-    ).returns(T.any(Array, T.self_type))
-  end
-  def create!(attributes = nil, &blk); end
-
-  sig do
-    params(
-      attributes: T.nilable(T.any(
-        T::Hash[T.any(Symbol, String), T.untyped],
-        T::Array[T::Hash[T.any(Symbol, String), T.untyped]]
-      )),
-      blk: T.nilable(T.proc.params(arg0: T.untyped).returns(T.untyped))
-    ).returns(T.any(Array, T.self_type))
-  end
-  def create(attributes = nil, &blk); end
 
   sig do
     params(
@@ -576,27 +552,6 @@ module ActiveRecord::Persistence::ClassMethods
     ).returns(T.self_type)
   end
   def decrement(attribute, by = 1); end
-
-  sig do
-    params(
-      id_or_array: T.any(T.untyped, T::Array[T.untyped])
-    ).returns(T.self_type)
-  end
-  def delete(id_or_array); end
-
-  sig do
-    params(
-      id_or_array: T.any(T.untyped, T::Array[T.untyped])
-    ).returns(T.self_type)
-  end
-  def destroy!(id_or_array); end
-
-  sig do
-    params(
-      id_or_array: T.any(T.untyped, T::Array[T.untyped])
-    ).returns(T.self_type)
-  end
-  def destroy(id_or_array); end
 
   sig { returns(T::Boolean) }
   def destroyed?(); end
@@ -618,43 +573,6 @@ module ActiveRecord::Persistence::ClassMethods
   end
   def increment(attribute, by = 1); end
 
-  sig do
-    params(
-      attributes: T::Array[T::Hash[T.any(Symbol, String), T.untyped]],
-      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)]))
-    ).returns(ActiveRecord::Result)
-  end
-  def insert_all!(attributes, returning: nil); end
-
-  sig do
-    params(
-      attributes: T::Array[T::Hash[T.any(Symbol, String), T.untyped]],
-      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)])),
-      unique_by: T.nilable(T.untyped)
-    ).returns(ActiveRecord::Result)
-  end
-  def insert_all(attributes, returning: nil, unique_by: nil); end
-
-  sig do
-    params(
-      attributes: T::Hash[T.any(Symbol, String), T.untyped],
-      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)])),
-      unique_by: T.nilable(T.untyped)
-    ).returns(ActiveRecord::Result)
-  end
-  def insert!(attributes, returning: nil, unique_by: nil); end
-
-  sig do
-    params(
-      attributes: T::Hash[T.any(Symbol, String), T.untyped],
-      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)])),
-      unique_by: T.nilable(T.untyped)
-    ).returns(ActiveRecord::Result)
-  end
-  def insert(attributes, returning: nil, unique_by: nil); end
-
-  def instantiate(attributes, column_types = {}, &blk); end
-
   sig { returns(T::Boolean) }
   def new_record?(); end
 
@@ -672,7 +590,7 @@ module ActiveRecord::Persistence::ClassMethods
     params(
       args: T.untyped,
       blk: T.proc.void,
-    ).returns(T::Boolean)
+    ).returns(TrueClass)
   end
   def save!(*args, &blk); end
 
@@ -684,10 +602,10 @@ module ActiveRecord::Persistence::ClassMethods
   end
   def save(*args, &blk); end
 
-  sig { params(attribute: T.any(Symbol, String)).returns(T.self_type) }
+  sig { params(attribute: T.any(Symbol, String)).returns(TrueClass) }
   def toggle!(attribute); end
 
-  sig { params(attribute: T.any(Symbol, String)).returns(T::Boolean) }
+  sig { params(attribute: T.any(Symbol, String)).returns(T.self_type) }
   def toggle(attribute); end
 
   sig do
@@ -728,15 +646,125 @@ module ActiveRecord::Persistence::ClassMethods
   sig do
     params(
       attributes: T::Hash[T.any(Symbol, String), T.untyped]
-    ).returns(T::Boolean)
+    ).returns(TrueClass)
   end
   def update!(attributes); end
 
+  # update_attributes! is an alias of update!
+  sig do
+    params(
+      attributes: T::Hash[T.any(Symbol, String), T.untyped]
+    ).returns(TrueClass)
+  end
+  def update_attributes!(attributes); end
+
+  sig do
+    params(
+      attributes: T::Hash[T.any(Symbol, String), T.untyped]
+    ).returns(T::Boolean)
+  end
+  def update(attributes); end
+
+  # update_attributes is an alias of update
+  sig do
+    params(
+      attributes: T::Hash[T.any(Symbol, String), T.untyped]
+    ).returns(T::Boolean)
+  end
+  def update_attributes(attributes); end
+end
+
+module ActiveRecord::Persistence::ClassMethods
+  sig do
+    params(
+      attributes: T.nilable(T.any(
+        T::Hash[T.any(Symbol, String), T.untyped],
+        T::Array[T::Hash[T.any(Symbol, String), T.untyped]]
+      )),
+      blk: T.nilable(T.proc.params(arg0: T.untyped).returns(T.untyped))
+    ).returns(T.untyped)
+  end
+  def create!(attributes = nil, &blk); end
+
+  sig do
+    params(
+      attributes: T.nilable(T.any(
+        T::Hash[T.any(Symbol, String), T.untyped],
+        T::Array[T::Hash[T.any(Symbol, String), T.untyped]]
+      )),
+      blk: T.nilable(T.proc.params(arg0: T.untyped).returns(T.untyped))
+    ).returns(T.untyped)
+  end
+  def create(attributes = nil, &blk); end
+
+  sig do
+    params(
+      id_or_array: T.any(T.untyped, T::Array[T.untyped])
+    ).returns(T.untyped)
+  end
+  def delete(id_or_array); end
+
+  sig do
+    params(
+      id_or_array: T.any(T.untyped, T::Array[T.untyped])
+    ).returns(T.untyped)
+  end
+  def destroy!(id_or_array); end
+
+  sig do
+    params(
+      id_or_array: T.any(T.untyped, T::Array[T.untyped])
+    ).returns(T.untyped)
+  end
+  def destroy(id_or_array); end
+
+  sig do
+    params(
+      attributes: T::Array[T::Hash[T.any(Symbol, String), T.untyped]],
+      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)]))
+    ).returns(ActiveRecord::Result)
+  end
+  def insert_all!(attributes, returning: nil); end
+
+  sig do
+    params(
+      attributes: T::Array[T::Hash[T.any(Symbol, String), T.untyped]],
+      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)])),
+      unique_by: T.nilable(T.untyped)
+    ).returns(ActiveRecord::Result)
+  end
+  def insert_all(attributes, returning: nil, unique_by: nil); end
+
+  sig do
+    params(
+      attributes: T::Hash[T.any(Symbol, String), T.untyped],
+      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)])),
+      unique_by: T.nilable(T.untyped)
+    ).returns(ActiveRecord::Result)
+  end
+  def insert!(attributes, returning: nil, unique_by: nil); end
+
+  sig do
+    params(
+      attributes: T::Hash[T.any(Symbol, String), T.untyped],
+      returning: T.nilable(T.any(FalseClass, T::Array[T.any(Symbol, String)])),
+      unique_by: T.nilable(T.untyped)
+    ).returns(ActiveRecord::Result)
+  end
+  def insert(attributes, returning: nil, unique_by: nil); end
+
+  sig { params(attributes: T.untyped, column_types: T::Hash[T.untyped, T.untyped], blk: T.proc.void).returns(T.untyped) }
+  def instantiate(attributes, column_types = {}, &blk); end
+
+  # The 'attributes' parameter can take either a hash or an array of hashes.
   sig do
     params(
       id: T.any(T.untyped, T::Array[T.untyped], Symbol),
-      attributes: T::Hash[T.any(Symbol, String), T.untyped]
-    ).returns(T.any(Array, T.self_type))
+      attributes: T.any(
+        T::Hash[T.any(Symbol, String), T.untyped],
+        T::Array[T::Hash[T.any(Symbol, String), T.untyped]]
+      )
+    ).returns(T.any(T::Array[T.untyped], T.untyped))
   end
   def update(id = :all, attributes); end
 
@@ -757,9 +785,6 @@ module ActiveRecord::Persistence::ClassMethods
     ).returns(ActiveRecord::Result)
   end
   def upsert(attributes, returning: nil, unique_by: nil); end
-
-  alias update_attributes update
-  alias update_attributes! update!
 end
 
 class ActiveRecord::Result; end
@@ -781,7 +806,7 @@ class ActiveRecord::Type::Boolean < ActiveRecord::Type::Value
   def initialize(args = nil); end
 
   sig { params(value: T.untyped).returns(T.nilable(T::Boolean)) }
-  def cast(value: T.untyped); end
+  def cast(value); end
 end
 
 module ActiveRecord
@@ -862,14 +887,363 @@ module ActiveRecord
   class WrappedDatabaseException < StatementInvalid; end
 end
 
-class ActiveRecord::Schema
-  sig {params(info: Hash, blk: T.proc.bind(ActiveRecord::Schema).void).void}
+class ActiveRecord::Schema < ActiveRecord::Migration::Current
+  sig {params(info: T::Hash[T.untyped, T.untyped], blk: T.proc.bind(ActiveRecord::Schema).void).void}
   def self.define(info = nil, &blk); end
 end
 
+# Method definitions are documented here:
+# https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html
 class ActiveRecord::Migration::Current < ActiveRecord::Migration
-  def change_column(table_name, column_name, type, options = nil); end
-  def create_table(table_name, options = nil); end
+  # Tables
+
+  # https://github.com/rails/rails/blob/v5.2.3/activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb#L151-L290
+  sig do
+    params(
+      table_name: T.any(String, Symbol),
+      comment: T.untyped,
+      id: T.any(T::Boolean, Symbol),
+      primary_key: T.any(String, Symbol, T::Array[T.any(String, Symbol)]),
+      options: T.untyped,
+      temporary: T::Boolean,
+      force: T.any(T::Boolean, Symbol),
+      as: T.untyped,
+      blk: T.nilable(T.proc.params(t: ActiveRecord::ConnectionAdapters::TableDefinition).void)
+    ).returns(T.untyped)
+  end
+  def create_table(
+    table_name,
+    comment: nil,
+    id: :primary_key,
+    primary_key: :_,
+    options: nil,
+    temporary: false,
+    force: false,
+    as: nil,
+    &blk
+  ); end
+
+  sig do
+    params(
+      table_name: T.any(String, Symbol),
+      bulk: T::Boolean
+    ).returns(T.untyped)
+  end
+  def change_table(
+    table_name,
+    bulk: false
+  ); end
+
+  sig { params(table_name: T.any(String, Symbol), new_name: T.any(String, Symbol)).returns(T.untyped) }
+  def rename_table(table_name, new_name); end
+
+  sig do
+    params(
+      table_name: T.any(String, Symbol),
+      force: T.any(T::Boolean, Symbol),
+      if_exists: T::Boolean
+    ).returns(T.untyped)
+  end
+  def drop_table(
+    table_name,
+    force: false,
+    if_exists: false
+  ); end
+
+  # Join Tables
+
+  sig do
+    params(
+      table_1: T.any(String, Symbol),
+      table_2: T.any(String, Symbol),
+      column_options: T.untyped,
+      options: T.untyped,
+      table_name: T.untyped,
+      temporary: T.untyped,
+      force: T::Boolean
+    ).returns(T.untyped)
+  end
+  def create_join_table(
+    table_1,
+    table_2,
+    column_options: {},
+    options: nil,
+    table_name: nil,
+    temporary: nil,
+    force: false
+  ); end
+
+  sig { params(table_1: T.any(String, Symbol), table_2: T.any(String, Symbol), options: T.untyped).returns(T.untyped) }
+  def drop_join_table(table_1, table_2, options = {}); end
+
+  # Columns
+
+  sig do
+    params(
+      table_name: T.untyped,
+      column_name: T.untyped,
+      type: T.untyped,
+      limit: T.untyped,
+      default: T.untyped,
+      null: T.untyped,
+      precision: T.untyped,
+      scale: T.untyped,
+      comment: T.untyped
+    ).returns(T.untyped)
+  end
+  def add_column(
+    table_name,
+    column_name,
+    type,
+    limit: nil,
+    default: nil,
+    null: nil,
+    precision: nil,
+    scale: nil,
+    comment: nil
+  ); end
+
+  sig do
+    params(
+      table_name: T.untyped,
+      column_name: T.untyped,
+      type: T.untyped,
+      limit: T.untyped,
+      default: T.untyped,
+      null: T.untyped,
+      precision: T.untyped,
+      scale: T.untyped,
+      comment: T.untyped
+    ).returns(T.untyped)
+  end
+  def change_column(
+    table_name,
+    column_name,
+    type,
+    limit: nil,
+    default: nil,
+    null: nil,
+    precision: nil,
+    scale: nil,
+    comment: nil
+  ); end
+
+  sig do
+    params(
+      table_name: T.untyped,
+      column_name: T.untyped,
+      null: T.untyped,
+      default: T.untyped
+    ).returns(T.untyped)
+  end
+  def change_column_null(table_name, column_name, null, default = nil); end
+
+  sig { params(table_name: T.untyped, column_name: T.untyped, default_or_changes: T.untyped).returns(T.untyped) }
+  def change_column_default(table_name, column_name, default_or_changes); end
+
+  sig { params(table_name: T.untyped, column_name: T.untyped, new_column_name: T.untyped).returns(T.untyped) }
+  def rename_column(table_name, column_name, new_column_name); end
+
+  sig do
+    params(
+      table_name: T.untyped,
+      column_name: T.untyped,
+      type: T.untyped,
+      options: T.untyped
+    ).returns(T.untyped)
+  end
+  def remove_column(
+    table_name,
+    column_name,
+    type = nil,
+    options = {}
+  ); end
+
+  sig { params(table_name: T.any(String, Symbol), column_names: T.untyped).returns(T.untyped) }
+  def remove_columns(table_name, *column_names); end
+
+  # Foreign Keys
+
+  sig do
+    params(
+      from_table: T.untyped,
+      to_table: T.untyped,
+      column: T.untyped,
+      primary_key: T.untyped,
+      name: T.untyped,
+      on_delete: T.untyped,
+      on_update: T.untyped,
+      validate: T.untyped
+    ).returns(T.untyped)
+  end
+  def add_foreign_key(
+    from_table,
+    to_table,
+    column: nil,
+    primary_key: nil,
+    name: nil,
+    on_delete: nil,
+    on_update: nil,
+    validate: nil
+  ); end
+
+  sig do
+    params(
+      from_table: T.untyped,
+      to_table: T.untyped,
+      column: T.untyped,
+      primary_key: T.untyped,
+      name: T.untyped,
+      on_delete: T.untyped,
+      on_update: T.untyped,
+      validate: T.untyped
+    ).returns(T.untyped)
+  end
+  def remove_foreign_key(
+    from_table,
+    to_table,
+    column: nil,
+    primary_key: nil,
+    name: nil,
+    on_delete: nil,
+    on_update: nil,
+    validate: nil
+  ); end
+
+  # Indices
+
+  sig do
+    params(
+      table_name: T.untyped,
+      column_name: T.untyped,
+      using: T.untyped,
+      unique: T.nilable(T::Boolean),
+      where: T.untyped,
+      order: T.untyped,
+      name: T.untyped,
+      length: T.untyped,
+      opclass: T.untyped,
+      type: T.untyped,
+      internal: T.untyped,
+      algorithm: T.untyped
+    ).returns(T.untyped)
+  end
+  def add_index(
+    table_name,
+    column_name,
+    using: nil,
+    unique: nil,
+    where: nil,
+    order: nil,
+    name: nil,
+    length: nil,
+    opclass: nil,
+    type: nil,
+    internal: nil,
+    algorithm: nil
+  ); end
+
+  sig do
+    params(
+      table_name: Symbol,
+      column: T.any(Symbol, T::Array[Symbol]),
+      name: T.nilable(Symbol)
+    ).returns(T.untyped)
+  end
+  def remove_index(
+    table_name,
+    column,
+    name: nil
+  ); end
+
+  sig do
+    params(
+      table_name: T.any(String, Symbol),
+      old_name: T.any(String, Symbol),
+      new_name: T.any(String, Symbol)
+    ).returns(T.untyped)
+  end
+  def rename_index(
+    table_name,
+    old_name,
+    new_name
+  ); end
+
+  # References
+
+  sig do
+    params(
+      table_name: T.any(String, Symbol),
+      ref_name: T.untyped,
+      type: T.untyped,
+      index: T.untyped,
+      foreign_key: T.untyped,
+      polymorphic: T.untyped,
+      null: T.untyped
+    ).returns(T.untyped)
+  end
+  def add_reference(
+    table_name,
+    ref_name,
+    type: nil,
+    index: nil,
+    foreign_key: nil,
+    polymorphic: nil,
+    null: nil
+  ); end
+
+  sig do
+    params(
+      table_name: T.any(String, Symbol),
+      ref_name: T.untyped,
+      foreign_key: T.untyped,
+      polymorphic: T.untyped,
+      index: T.untyped
+    ).returns(T.untyped)
+  end
+  def remove_reference(
+    table_name,
+    ref_name,
+    foreign_key: false,
+    polymorphic: false,
+    index: nil
+  ); end
+
+  # Timestamps
+
+  sig { params(table_name: T.any(String, Symbol), options: T.untyped).returns(T.untyped) }
+  def add_timestamps(table_name, options = {}); end
+
+  sig { params(table_name: T.any(String, Symbol), options: T.untyped).returns(T.untyped) }
+  def remove_timestamps(table_name, options = {}); end
+
+  # Extensions
+
+  sig { params(name: T.any(String, Symbol)).returns(T.untyped) }
+  def enable_extension(name); end
+
+  sig { params(name: T.any(String, Symbol)).returns(T.untyped) }
+  def disable_extension(name); end
+
+  # Miscellaneous
+
+  sig { params(message: String, subitem: T.untyped).void }
+  def say(message, subitem = false); end
+
+  sig { params(message: String).returns(T.untyped) }
+  def say_with_time(message); end
+
+  sig { void }
+  def suppress_messages; end
+
+  sig { returns(T.untyped) }
+  def reversible(); end
+
+  sig { params(migration_classes: T.untyped).returns(T.untyped) }
+  def revert(*migration_classes); end
+
+  sig { params(sql: String, name: T.nilable(String)).returns(T.untyped) }
+  def execute(sql, name = nil); end
 end
 
 module ActiveRecord::AttributeMethods::Dirty

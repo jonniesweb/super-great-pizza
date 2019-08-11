@@ -18,7 +18,7 @@ class FetcherService
       FetchDiscountJob.perform_later(code, store_id)
     end
 
-    Store.find_by(code: store_id)
+    T.must(Store.find_by(code: store_id))
       .discounts
       .pluck(:code)
       .reject { |existing_code| range === existing_code }
@@ -48,7 +48,7 @@ class FetcherService
   end
 
   def test_one
-    process_discount(Discount.find_by(id: 41).json)
+    process_discount(T.must(Discount.find_by(id: 41)).json)
   end
 
   def reprocess_all

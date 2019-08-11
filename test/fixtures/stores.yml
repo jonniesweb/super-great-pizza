@@ -1,9 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  code: MyString
-  city: MyString
-  address: MyString
+  code: store code
+  city: city name
+  address: an address
   json: 
 
 two:
