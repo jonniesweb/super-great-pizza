@@ -20,6 +20,10 @@ group :development, :test do
   gem 'pry-byebug'
 end
 
+group :test do
+  gem 'webmock'
+end
+
 group :development do
   gem 'web-console'
   gem 'listen', '>= 3.0.5', '< 3.2'
