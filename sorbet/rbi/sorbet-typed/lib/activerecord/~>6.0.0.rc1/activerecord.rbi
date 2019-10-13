@@ -5,6 +5,6 @@
 #
 #   https://github.com/sorbet/sorbet-typed/edit/master/lib/activerecord/~>6.0.0.rc1/activerecord.rbi
 #
-# typed: strong
+# typed: ignore
 
 ActiveRecord::Migration::Compatibility::V6_0 = ActiveRecord::Migration::Current

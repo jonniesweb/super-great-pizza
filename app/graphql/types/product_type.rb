@@ -1,4 +1,4 @@
-# typed: true
+# typed: ignore
 module Types
   class ProductType < Types::BaseObject
     field :name, String, null: false

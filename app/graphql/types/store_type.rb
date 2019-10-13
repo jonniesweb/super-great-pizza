@@ -1,4 +1,4 @@
-# typed: strict
+# typed: ignore
 module Types
   class StoreType < Types::BaseObject
     field :code, String, null: false

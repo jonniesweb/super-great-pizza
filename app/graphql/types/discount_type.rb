@@ -1,4 +1,4 @@
-# typed: true
+# typed: ignore
 module Types
   class DiscountType < Types::BaseObject
     field :code, String, null: false

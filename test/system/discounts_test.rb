@@ -1,4 +1,4 @@
-# typed: false
+# typed: ignore
 require "application_system_test_case"
 
 class DiscountsTest < ApplicationSystemTestCase

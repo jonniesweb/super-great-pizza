@@ -5,7 +5,7 @@
 #
 #   https://github.com/sorbet/sorbet-typed/edit/master/lib/activemodel/all/activemodel.rbi
 #
-# typed: strong
+# typed: ignore
 
 module ActiveModel::Dirty
   extend T::Sig

@@ -11,11 +11,6 @@ module ApplicationHelper
   include ActionView::Helpers
 end
 
-module DiscountsHelper
-  include Kernel
-  include ActionView::Helpers
-end
-
 module ListHelper
   include Kernel
   include ActionView::Helpers
@@ -24,4 +19,9 @@ end
 module ProductTypesHelper
   include Kernel
   include ActionView::Helpers
+end
+
+module ActionController::Helpers
+  sig { returns(T.all(ApiHelper, ApplicationHelper, ListHelper, ProductTypesHelper)) }
+  def helpers; end
 end

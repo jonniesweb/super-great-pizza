@@ -1,4 +1,4 @@
-# typed: true
+# typed: false
 class GraphqlController < ApplicationController
   def execute
     variables = ensure_hash(params[:variables])
