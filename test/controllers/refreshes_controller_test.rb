@@ -8,17 +8,28 @@ class RefreshesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should post discount" do
-    post refresh_discount_url
-    assert_response :success
+    assert_enqueued_with(job: FetchDiscountJob, args: [discounts(:one).code, stores(:one).code]) do
+      post discount_refresh_path(
+        store_id: stores(:one).code,
+        code: discounts(:one).code
+      )
+    end
+
+    assert_redirected_to refresh_path
   end
 
   test "should post store" do
-    post refresh_store_url
-    assert_response :success
+    post store_refresh_path(
+      store_id: stores(:one).code
+    )
+    assert_redirected_to refresh_path
   end
 
   test "should post all" do
-    post refresh_all_url
-    assert_response :success
+    assert_enqueued_jobs(Discount.count, only: FetchDiscountJob) do
+      post all_refresh_url
+    end
+
+    assert_redirected_to refresh_path
   end
 end
