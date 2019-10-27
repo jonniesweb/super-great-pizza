@@ -15,6 +15,7 @@ gem 'graphql'
 gem 'graphiql-rails'
 gem 'sorbet-runtime'
 gem 'sorbet-rails'
+gem 'webpacker', '4.0.7'
 
 group :development, :test do
   gem 'pry-rails'

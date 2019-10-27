@@ -12,6 +12,9 @@ up:
   - ruby: 2.6.3
   - bundler
   - railgun
+  - node:
+      version: v10.13.0
+      yarn: true
   - database:
       bootstrap: bin/rails db:create db:migrate db:schema:load
       migrate: bin/rails db:migrate db:test:prepare
