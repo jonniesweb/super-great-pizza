@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "super_great_pizza": {
+      "schemaPath": "./config/schemas/schema.json",
+      "includes": ["**/*.graphql"]
+    }
+  }
+}

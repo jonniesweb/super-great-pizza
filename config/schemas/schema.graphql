@@ -1,0 +1,65 @@
+type Discount {
+  code: String!
+  createdAt: ISO8601DateTime!
+  id: ID!
+  imageUrl: String
+  json: String!
+  lastChecked: ISO8601DateTime!
+  name: String!
+  price: String
+  productGroups: [ProductGroup!]!
+  removed: Boolean!
+  store: Store!
+  updatedAt: ISO8601DateTime!
+}
+
+enum Group {
+  BREAD
+  DESSERT
+  DRINKS
+  FEAST
+  NONE
+  PIZZA
+  WINGS
+}
+
+"""
+An ISO 8601-encoded datetime
+"""
+scalar ISO8601DateTime
+
+type Mutation {
+}
+
+type Product {
+  code: String!
+  createdAt: ISO8601DateTime!
+  name: String!
+  productGroups: [ProductGroup!]!
+  updatedAt: ISO8601DateTime!
+}
+
+type ProductGroup {
+  createdAt: ISO8601DateTime!
+  discount: Discount!
+  groupType: Group!
+  maxQuantity: Int!
+  products: [Product!]!
+  requiredQuantity: Int!
+  updatedAt: ISO8601DateTime!
+}
+
+type Query {
+  storeByCode(code: String!): Store
+  stores: [Store!]!
+}
+
+type Store {
+  address: String
+  city: String
+  code: String!
+  createdAt: ISO8601DateTime!
+  discounts: [Discount!]!
+  json: String!
+  updatedAt: ISO8601DateTime!
+}
