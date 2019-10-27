@@ -1,6 +1,7 @@
 # typed: ignore
 module Types
   class DiscountType < Types::BaseObject
+    field :id, ID, null: false
     field :code, String, null: false
     field :name, String, null: false
     field :json, String, null: false
