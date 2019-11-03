@@ -8,17 +8,11 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import { ApolloProvider } from "@apollo/react-hooks";
-import "core-js/stable";
+import * as React from "react";
 import { useState } from "react";
 import { render } from "react-dom";
-import "regenerator-runtime/runtime";
-import {
-  useAllStoresQuery,
-  useDiscountsForStoreQuery
-} from "../generated/graphql";
+import { useAllStoresQuery, useDiscountsForStoreQuery } from "../generated/graphql";
 import { client } from "./client";
-
-import React = require("react");
 
 function StoresSelector(props: { onStoreChange: (arg0: string) => void }) {
   const { loading, error, data } = useAllStoresQuery();
@@ -49,6 +43,7 @@ function Discounts(props: { storeId: string }) {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error ${error}</p>;
+  if (data == null) return <p>No discounts found for store</p>;
 
   return (
     <>
