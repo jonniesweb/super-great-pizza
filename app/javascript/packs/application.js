@@ -28,20 +28,20 @@ const client = new ApolloClient({
 
 
 const storeByCodeQuery = gql`
-{
-  storeByCode(code: "10503") {
+query DiscountsForStore($storeId: String!) {
+  storeByCode(code: $storeId) {
     discounts {
       id
-      name
       code
       price
+      name
     }
   }
 }
 `;
 
 const storesQuery = gql`
-{
+query AllStores {
   stores {
     address
     code
@@ -53,7 +53,7 @@ function StoresSelector(props) {
   const { loading, error, data } = useQuery(storesQuery);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error </p>;
+  if (error) return <p>Error #{error.message}</p>;
 
   const options = data.stores.map(({ address, code }) => (
     <option key={code} value={code}>{address}</option>
@@ -65,12 +65,15 @@ function StoresSelector(props) {
 }
 
 function Discounts(props) {
-  const { loading, error, data } = useQuery(storeByCodeQuery);
+  const storeId = props.storeId;
+
+  if (storeId == null) return null;
+  
+  const { loading, error, data } = useQuery(storeByCodeQuery, { variables: { storeId: storeId }});
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error </p>;
+  if (error) return <p>Error #{error.message}</p>;
 
-  console.log(props.storeId)
   return data.storeByCode.discounts.map(({ name, code, price, productGroups }) => (
     <div key={code}>
       <p>
@@ -81,7 +84,7 @@ function Discounts(props) {
 }
 
 function App() {
-  const [storeId, setStoreId] = useState(0);
+  const [storeId, setStoreId] = useState(null);
 
   return (
     <ApolloProvider client={client}>
