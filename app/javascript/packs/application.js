@@ -13,7 +13,7 @@ import "regenerator-runtime/runtime";
 import ApolloClient, { gql } from 'apollo-boost';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider, useQuery } from '@apollo/react-hooks';
-import React from 'react';
+import React, { useState } from 'react';
 import { render } from 'react-dom';
 
 
@@ -49,7 +49,7 @@ const storesQuery = gql`
 }
 `;
 
-function StoresSelector() {
+function StoresSelector(props) {
   const { loading, error, data } = useQuery(storesQuery);
 
   if (loading) return <p>Loading...</p>;
@@ -60,16 +60,17 @@ function StoresSelector() {
   ));
 
   return (
-    <select>{options}</select>
+    <select onChange={(event) => props.onStoreChange(event.target.value)}>{options}</select>
   );
 }
 
-function Discounts() {
+function Discounts(props) {
   const { loading, error, data } = useQuery(storeByCodeQuery);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error </p>;
 
+  console.log(props.storeId)
   return data.storeByCode.discounts.map(({ name, code, price, productGroups }) => (
     <div key={code}>
       <p>
@@ -79,14 +80,17 @@ function Discounts() {
   ));
 }
 
+function App() {
+  const [storeId, setStoreId] = useState(0);
 
-const App = () => (
-  <ApolloProvider client={client}>
-    <div>
-      <StoresSelector/>
-      <Discounts/>
-    </div>
-  </ApolloProvider>
-);
+  return (
+    <ApolloProvider client={client}>
+      <div>
+        <StoresSelector onStoreChange={setStoreId}/>
+        <Discounts storeId={storeId}/>
+      </div>
+    </ApolloProvider>
+  );
+}
 
 render(<App />, document.getElementById('root'));
