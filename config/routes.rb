@@ -1,6 +1,7 @@
 # typed: strict
 Rails.application.routes.draw do
-  root 'list#index'
+  root 'list#react'
+  resources :list, only: :index
   resources :product_types
   resources :discounts
 

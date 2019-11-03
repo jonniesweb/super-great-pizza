@@ -2,7 +2,7 @@
 
 <h1>Discounts with info</h1>
 
-<%= search_form_for @q, url: root_path do |f| %>
+<%= search_form_for @q, url: list_index_path do |f| %>
   <%= f.label 'store id' %>
   <%= f.collection_select :store_id_eq, Store.all, :id, :address, include_blank: true %>
 
