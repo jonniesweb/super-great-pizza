@@ -219,24 +219,3 @@ export function useDiscountsForStoreLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type DiscountsForStoreQueryHookResult = ReturnType<typeof useDiscountsForStoreQuery>;
 export type DiscountsForStoreLazyQueryHookResult = ReturnType<typeof useDiscountsForStoreLazyQuery>;
 export type DiscountsForStoreQueryResult = ApolloReactCommon.QueryResult<DiscountsForStoreQuery, DiscountsForStoreQueryVariables>;
-
-      export interface IntrospectionResultData {
-        __schema: {
-          types: {
-            kind: string;
-            name: string;
-            possibleTypes: {
-              name: string;
-            }[];
-          }[];
-        };
-      }
-
-      const result: IntrospectionResultData = {
-  "__schema": {
-    "types": []
-  }
-};
-
-      export default result;
-    
