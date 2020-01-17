@@ -4,10 +4,9 @@ type: rails
 
 up:
   - homebrew:
-    - openssl
-    - shopify/shopify/mysql-client:
-        or:        [mysql]
-        conflicts: [mysql-connector-c]
+    - mysql-client@5.7:
+        or: [mysql@5.7]
+        conflicts: [mysql-connector-c, mysql, mysql-client]
     # - another_package
   - ruby: 2.6.5
   - bundler
