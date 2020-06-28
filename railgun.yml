@@ -4,15 +4,15 @@ name: super-great-pizza
 vm:
   image:      /opt/dev/misc/railgun-images/default
   ip_address: 192.168.64.208
-  memory:     2G
-  cores:      2
+  memory:     4G
+  cores:      4
 
 volumes:
-  root:  '2G'
+  root:  '10G'
 
 services:
   - redis
-  - memcached
+  # - memcached
   # - toxiproxy
   - mysql
   # - elasticsearch

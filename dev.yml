@@ -25,6 +25,9 @@ up:
 server:
   port: 18848
 
+env:
+  DOCKER_HOST: super-great-pizza.railgun:2375
+
 commands:
   console: bin/rails console
   test:

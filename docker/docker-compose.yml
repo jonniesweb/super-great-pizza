@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: "mysql:5.7"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+    # ports:
+    #   - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+  web:
+    build: ../.
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      SECRET_KEY_BASE: lol
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_LOG_TO_STDOUT: "true"
+      DATABASE_URL: "mysql2://root:root@db:3306/super-great-pizza_production"
