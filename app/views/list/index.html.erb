@@ -10,7 +10,7 @@
   <%= f.search_field :code_eq %>
 
   <%= f.label 'Product Name' %>
-  <%= f.collection_select :product_types_id_eq, ProductType.all, :id, :name, include_blank: true %>
+  <%= f.collection_select :products_id_eq, Product.all, :id, :name, include_blank: true %>
 
   <%= f.label 'Minimum Required' %>
   <%= f.search_field :discount_product_type_groups_required_quantity_lteq %>
@@ -50,7 +50,7 @@
                 <%= tag.td group.group_type %>
                 <%= tag.td group.required_quantity %>
                 <%= tag.td group.max_quantity %>
-                <%= tag.td group.product_types.map(&:code).join(', ') %>
+                <%= tag.td group.products.map(&:code).join(', ') %>
               <% end %>
             <% end %>
           <% end %>

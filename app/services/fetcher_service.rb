@@ -88,9 +88,9 @@ class FetcherService
 
       product_codes = product_group.dig('ProductCodes')
       product_types = product_codes.each do |code|
-        product_type = ProductType.find_or_create_by!(code: code)
+        product = Product.find_or_create_by!(code: code)
 
-        group.discount_product_types.find_or_create_by!(product_type: product_type)
+        group.discount_product_types.find_or_create_by!(product: product)
       end
     end
   end

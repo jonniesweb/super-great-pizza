@@ -2,7 +2,7 @@
 Rails.application.routes.draw do
   root 'list#react'
   resources :list, only: :index
-  resources :product_types
+  resources :products
   resources :discounts
 
   resources :locations do

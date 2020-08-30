@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_26_205124) do
+ActiveRecord::Schema.define(version: 2020_08_30_234450) do
 
   create_table "discount_product_type_groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "discount_id"
@@ -22,10 +22,10 @@ ActiveRecord::Schema.define(version: 2019_01_26_205124) do
   end
 
   create_table "discount_product_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "product_type_id"
+    t.integer "product_id"
     t.integer "discount_product_type_group_id"
     t.index ["discount_product_type_group_id"], name: "index_discount_product_types_group_id"
-    t.index ["product_type_id"], name: "index_discount_product_types_on_product_type_id"
+    t.index ["product_id"], name: "index_discount_product_types_on_product_id"
   end
 
   create_table "discounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 2019_01_26_205124) do
     t.index ["store_id"], name: "index_discounts_on_store_id"
   end
 
-  create_table "product_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "products", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "code"
     t.datetime "created_at", null: false

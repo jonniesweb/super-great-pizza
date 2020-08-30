@@ -1,8 +1,8 @@
 # typed: false
 class DiscountProductTypeGroup < ApplicationRecord
   belongs_to :discount
-  has_many :discount_product_types, dependent: :delete
-  has_many :product_types, through: :discount_product_types
+  has_many :discount_product_types, dependent: :delete_all
+  has_many :products, through: :discount_product_types
 
   def ==(other)
     other.class == self.class &&

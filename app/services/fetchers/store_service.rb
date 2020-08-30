@@ -19,11 +19,11 @@ module Fetchers
           store.address = address if address
         end
 
-        product_types = body.fetch('Variants')
+        products = body.fetch('Variants')
 
-        product_types.keys.each do |code|
-          ProductType.find_or_create_by!(code: code) do |product_type|
-            product_type.name = product_types.dig(code, 'Name')
+        products.keys.each do |code|
+          Product.find_or_create_by!(code: code) do |product_type|
+            product_type.name = products.dig(code, 'Name')
           end
         end
 
